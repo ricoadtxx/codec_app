@@ -1,0 +1,6 @@
+__pycache__/
+_venv_/
+ui.py
+*.keras
+*.h5
+*.tif

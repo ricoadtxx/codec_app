@@ -134,7 +134,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_image_array = None
         self.outputPanelComponent.inputPreviewLabel.clear()
         self.outputPanelComponent.outputImageLabel.clear()
-        self.outputPanelComponent.shpInfoText.clear()
+        self.outputPanelComponent.outputShapefile.clear()
 
     def onModelChanged(self, model_type):
         band_count = self.input_image_array.shape[2] if self.input_image_array is not None else 0

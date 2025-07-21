@@ -10,9 +10,10 @@ from rasterio.plot import reshape_as_image
 
 from ..styles.component_styles import (
     OUTPUT_HEADER_STYLE, TAB_WIDGET_STYLE, PREVIEW_LABEL_STYLE,
-    INPUT_PREVIEW_LABEL_STYLE, TEXT_EDIT_STYLE, INFO_LABEL_STYLE
+    INPUT_PREVIEW_LABEL_STYLE, INFO_LABEL_STYLE
 )
 from ..styles.base_styles import PANEL_STYLE
+from config.settings import SENTINEL2_BANDS
 
 
 class OutputPanelComponent(QtWidgets.QFrame):
@@ -111,7 +112,6 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.rightLayout.addWidget(self.outputInfoLabel)
 
     def updateInputPreview(self, image_path):
-        """Tampilkan preview dari input TIFF pada tab Input"""
         try:
             print(f"[DEBUG] Membuka file: {image_path}")
             with rasterio.open(image_path) as src:
@@ -119,11 +119,14 @@ class OutputPanelComponent(QtWidgets.QFrame):
                 is_uav = band_count <= 4
                 is_sentinel = band_count > 4
 
-                # Tentukan band untuk RGB
                 if is_uav:
                     bands_to_read = [1, 2, 3]
-                else:  # Sentinel
-                    bands_to_read = [4, 3, 2]
+                else: 
+                    bands_to_read = [
+                        SENTINEL2_BANDS['B4'] + 1,
+                        SENTINEL2_BANDS['B3'] + 1,
+                        SENTINEL2_BANDS['B2'] + 1
+                    ]
 
                 if max(bands_to_read) > band_count:
                     QMessageBox.warning(
@@ -133,28 +136,35 @@ class OutputPanelComponent(QtWidgets.QFrame):
                     )
                     return
 
-                # Baca band dan susun ke RGB
                 bands = [src.read(b) for b in bands_to_read]
                 array = np.stack(bands, axis=-1)
 
-                # Normalisasi ke 0-255
                 array = array.astype(np.float32)
-                array -= array.min()
-                array /= array.max()
-                array *= 255
-                array = array.astype(np.uint8)
+
+                if is_uav:
+                    # Normalisasi UAV (0-255)
+                    array -= array.min()
+                    if array.max() > 0:
+                        array /= array.max()
+                    array *= 255
+                    array = array.astype(np.uint8)
+                    
+                elif is_sentinel:
+                    array = np.clip(array, 0, 10000)
+                    
+                    p2, p98 = np.percentile(array, (2, 98))
+                    array = np.clip((array - p2) / (p98 - p2) * 255, 0, 255)
+                    array = array.astype(np.uint8)
 
                 height, width, channel = array.shape
                 bytes_per_line = channel * width
 
-                # Buat QImage dari NumPy array
                 qimg = QtGui.QImage(
                     array.data, width, height, bytes_per_line, QtGui.QImage.Format_RGB888
                 )
 
                 pixmap = QtGui.QPixmap.fromImage(qimg)
 
-                # Tampilkan pada QLabel
                 scaled_pixmap = pixmap.scaled(
                     self.inputPreviewLabel.width(), 
                     self.inputPreviewLabel.height(), 
@@ -169,7 +179,7 @@ class OutputPanelComponent(QtWidgets.QFrame):
         except Exception as e:
             QMessageBox.critical(self, "Gagal Menampilkan Preview", str(e))
             print(f"[ERROR] updateInputPreview: {e}")
-
+        
     def updateOutputPreview(self, output_path):
         if not os.path.exists(output_path):
             print(f"File tidak ditemukan: {output_path}")

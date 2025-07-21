@@ -1,9 +1,11 @@
 from pathlib import Path
 from typing import Optional, Dict, Any
-import logging
 import numpy as np
 import rasterio
 import geopandas as gpd
+import shutil, zipfile, tempfile, logging
+
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from core.predict import extract_coastline
 
@@ -16,33 +18,33 @@ class FileHandler:
         self.output_dir.mkdir(exist_ok=True)
         self.current_file_path = None
     
-    def validate_file(self, file_path: str) -> bool:
+    def validate_file(self, file_path: str) -> tuple[bool, Optional[str]]:
         try:
             path = Path(file_path)
             if not path.exists():
-                logger.error(f"File does not exist: {file_path}")
-                return False
+                return False, f"File tidak ditemukan: {file_path}"
             
             supported_extensions = ['.tif', '.tiff']
             if path.suffix.lower() not in supported_extensions:
-                logger.error(f"Unsupported file format: {path.suffix}")
-                return False
+                return False, f"Format file tidak didukung: {path.suffix}"
             
-            file_size = path.stat().st_size
-            if file_size > 500 * 1024 * 1024:
-                logger.warning(f"Large file size: {file_size / (1024*1024):.1f} MB")
-            
-            return True
+            file_size_mb = path.stat().st_size / (1024 * 1024)
+
+            if file_size_mb > 500 * 1024 * 1024:
+                return False, f"Ukuran file terlalu besar ({file_size_mb:.2f} MB). Maksimal 500 MB."
+            elif file_size_mb >= 100:
+                return True, f"Ukuran file besar ({file_size_mb:.2f} MB). Proses deteksi mungkin akan memakan waktu lebih lama."
+
+            return True, None
         except Exception as e:
-            logger.error(f"File validation error: {str(e)}")
-            return False
-    
-    def set_current_file(self, file_path: str) -> bool:
-        if self.validate_file(file_path):
+            return False, f"Terjadi kesalahan saat memvalidasi file: {str(e)}"
+
+    def set_current_file(self, file_path: str) -> tuple[bool, Optional[str]]:
+        is_valid, message = self.validate_file(file_path)
+        if is_valid:
             self.current_file_path = file_path
-            return True
-        return False
-    
+        return is_valid, message
+        
     def get_file_info(self, file_path: Optional[str] = None) -> Dict[str, Any]:
         if file_path is None:
             file_path = self.current_file_path
@@ -113,3 +115,40 @@ class FileHandler:
         except Exception as e:
             logger.error(f"Error saving coastline shapefile: {str(e)}")
             return None
+
+    def download_and_clear_outputs(self, parent_widget=None) -> Optional[str]:
+        try:
+            output_files = list(self.output_dir.glob("*"))
+            if not output_files:
+                logger.info("Tidak ada file output untuk dikompres.")
+                return None
+
+            zip_filename = self.output_dir / "hasil_output.zip"
+            with zipfile.ZipFile(zip_filename, 'w') as zipf:
+                for file in output_files:
+                    if file != zip_filename:  # Jangan zip file zip itu sendiri
+                        zipf.write(file, arcname=file.name)
+
+            save_path, _ = QFileDialog.getSaveFileName(
+                parent_widget,
+                "Simpan File Output",
+                str(zip_filename),
+                "ZIP files (*.zip)"
+            )
+
+            if not save_path:
+                return None
+
+            shutil.copy(zip_filename, save_path)
+            logger.info(f"Hasil output disimpan ke: {save_path}")
+
+            # Hapus semua file di folder output
+            for file in output_files:
+                file.unlink()
+
+            return save_path
+
+        except Exception as e:
+            logger.error(f"Gagal mendownload dan membersihkan output: {str(e)}")
+            return None
+

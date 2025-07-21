@@ -90,16 +90,12 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.tabWidget.addTab(self.shpTab, "🗺️ Shapefile Info")
         self.rightLayout.addWidget(self.tabWidget)
 
-        self.outputInfoLabel = QtWidgets.QLabel(
-            "📊 Hasil akan otomatis ditampilkan setelah proses deteksi selesai\n"
-            "📁 File output tersimpan di direktori: ./output/"
-        )
-        self.outputInfoLabel.setFont(QtGui.QFont("Segoe UI", 9))
-        self.outputInfoLabel.setAlignment(Qt.AlignCenter)
-        self.outputInfoLabel.setWordWrap(True)
-        self.outputInfoLabel.setStyleSheet(INFO_LABEL_STYLE)
-        self.rightLayout.addWidget(self.outputInfoLabel)
-        
+        # Button download
+        self.downloadButton = QtWidgets.QPushButton("📥 Download Output")
+        self.downloadButton.setCursor(Qt.PointingHandCursor)
+        self.downloadButton.setEnabled(False)  # Pastikan ini ada
+        self.downloadButton.setStyleSheet("padding: 6px 12px;")
+        self.layout().addWidget(self.downloadButton)
 
     def updateInputPreview(self, image_path):
         try:
@@ -242,4 +238,25 @@ class OutputPanelComponent(QtWidgets.QFrame):
             self.outputShapefile.setText("Gagal menampilkan shapefile")
             print(f"[ERROR] updateShapefilePreview: {e}")
         
-        
+    def set_file_handler(self, file_handler):
+        self.file_handler = file_handler
+        self.downloadButton.clicked.connect(self.handle_download)
+
+    def handle_download(self):
+        if not hasattr(self, 'file_handler'):
+            QMessageBox.warning(self, "Error", "FileHandler belum terhubung.")
+            return
+
+        zip_path = self.file_handler.download_and_clear_outputs(parent_widget=self)
+        if zip_path:
+            QMessageBox.information(self, "Berhasil", f"Hasil berhasil disimpan:\n{zip_path}")
+            # Tidak perlu membersihkan tampilan UI!
+        else:
+            QMessageBox.warning(self, "Gagal", "Download dibatalkan atau tidak ada file.")
+            
+    # output_panel.py
+    def set_detection_state(self, is_processing: bool):
+        """Tentukan apakah proses deteksi sedang berjalan atau sudah selesai."""
+        self.downloadButton.setEnabled(not is_processing)
+
+

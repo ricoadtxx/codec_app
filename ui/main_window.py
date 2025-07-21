@@ -15,6 +15,7 @@ from .components.process_section import ProcessSectionComponent
 from .components.output_panel import OutputPanelComponent
 from models.coastline_detector import CoastlineDetectorFactory
 from utils.helper import choose_model_by_band_count
+from core.file_handler import FileHandler
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -25,6 +26,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.input_image_path = None
         self.input_image_array = None
         self.detection_thread = None
+        self.file_handler = FileHandler()
+        self.outputPanelComponent.set_file_handler(self.file_handler)
+
 
     def setupUi(self):
         self.setObjectName("MainWindow")
@@ -101,9 +105,17 @@ class MainWindow(QtWidgets.QMainWindow):
         )
 
         if file_path:
+            is_valid, message = self.file_handler.set_current_file(file_path)
+
+            if not is_valid:
+                self.showWarning("File Tidak Valid", message or "File tidak sesuai.")
+                return
+            elif message:
+                QMessageBox.information(self, "Peringatan Ukuran File", message)
+                
             self.input_image_path = file_path
             self.fileSectionComponent.setFilePath(file_path)
-
+            
             try:
                 with rasterio.open(file_path) as dataset:
                     image_array = dataset.read()  # (band, H, W)
@@ -135,7 +147,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.outputPanelComponent.inputPreviewLabel.clear()
         self.outputPanelComponent.outputImageLabel.clear()
         self.outputPanelComponent.outputShapefile.clear()
-        self.outputPanelComponent.clear_output_files()
+        # self.file_handler.download_and_clear_outputs()
 
     def onModelChanged(self, model_type):
         band_count = self.input_image_array.shape[2] if self.input_image_array is not None else 0
@@ -188,6 +200,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.detection_thread.detectionFinished.connect(self.onDetectionFinished)
         self.detection_thread.detectionFailed.connect(self.onDetectionFailed)
         self.detection_thread.start()
+        self.outputPanelComponent.set_detection_state(True)
 
     def onDetectionFinished(self, output_path, meta):
         self.processSectionComponent.setProcessingState(False)
@@ -197,6 +210,7 @@ class MainWindow(QtWidgets.QMainWindow):
         shapefile_path = meta.get('shapefile_path', None) if meta else None
         if shapefile_path:
             self.outputPanelComponent.updateShapefilePreview(shapefile_path)
+        self.outputPanelComponent.set_detection_state(False)
 
     def onDetectionFailed(self, error_msg):
         self.processSectionComponent.setProcessingState(False)

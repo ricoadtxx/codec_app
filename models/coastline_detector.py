@@ -4,7 +4,7 @@ import rasterio
 from abc import ABC, abstractmethod
 from typing import Optional, Tuple, Dict, Any
 from keras.models import load_model
-from core.predict_uav import preprocess_image, morphological_smooth, predict, save_tiff, mask_to_polygons, extract_coastline
+from core.predict import preprocess_image, morphological_smooth, predict, save_tiff, mask_to_polygons, extract_coastline
 from PyQt5.QtCore import QThread, pyqtSignal
 from datetime import datetime
 
@@ -109,12 +109,14 @@ class UAVCoastlineDetector(BaseCoastlineDetector):
         except Exception as e:
             logger.error(f"UAV postprocessing error: {str(e)}")
             return detection_result
+        
     def convert_to_polygons(self, mask: np.ndarray, transform, crs):
         try:
             return mask_to_polygons(mask, transform, crs)
         except Exception as e:
             logger.error(f"Error converting to polygons: {str(e)}")
             return None
+        
     def get_coastline(self, polygons_gdf, water_class: int = 1):
         try:
             return extract_coastline(polygons_gdf, water_class)

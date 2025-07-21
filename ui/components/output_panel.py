@@ -87,14 +87,11 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.shpTabLayout = QtWidgets.QVBoxLayout(self.shpTab)
         self.shpTabLayout.setContentsMargins(10, 10, 10, 10)
 
-        self.shpInfoText = QtWidgets.QTextEdit()
-        self.shpInfoText.setPlaceholderText(
-            "🗺️ Informasi Shapefile akan ditampilkan di sini:\n\n"
-            "• Jumlah feature\n• Sistem koordinat\n• Bounding box\n• Atribut data"
-        )
-        self.shpInfoText.setStyleSheet(TEXT_EDIT_STYLE)
-        self.shpInfoText.setReadOnly(True)
-        self.shpTabLayout.addWidget(self.shpInfoText)
+        self.outputShapefile = QtWidgets.QLabel("🗺️ Shapefile garis pantai akan ditampilkan di sini")
+        self.outputShapefile.setAlignment(Qt.AlignCenter)
+        self.outputShapefile.setMinimumHeight(300)
+        self.outputShapefile.setStyleSheet(PREVIEW_LABEL_STYLE)
+        self.shpTabLayout.addWidget(self.outputShapefile)
 
         # Add tabs
         self.tabWidget.addTab(self.inputTab, "📥 Input TIFF")
@@ -202,6 +199,6 @@ class OutputPanelComponent(QtWidgets.QFrame):
         except Exception as e:
             print(f"Gagal menampilkan output: {e}")
         
-    def updateShapefileInfo(self, info_text):
+    def updateShapefile(self, info_text):
         """Update shapefile information display"""
-        self.shpInfoText.setPlainText(info_text)
+        self.outputShapefile.setPlainText(info_text)

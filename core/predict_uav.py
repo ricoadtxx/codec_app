@@ -113,69 +113,12 @@ def extract_coastline(polygons_gdf, water_class=1):
                 coastlines.append(LineString(subpoly.exterior.coords))
     coastline_gdf = gpd.GeoDataFrame({'geometry': coastlines}, crs=polygons_gdf.crs)
     return coastline_gdf
-
-def visualize_results(rgb_image, predicted_mask, coastline_gdf, transform, output_path):
-    fig, axes = plt.subplots(1, 3, figsize=(21, 7))
-    fig.suptitle('Coastline Detection Results (UAV Ortho RGB)', fontsize=16, fontweight='bold')
-
-    # === 1. Input RGB Image ===
-    ax1 = axes[0]
-    rgb = np.nan_to_num(rgb_image, nan=0.0, posinf=0.0, neginf=0.0)
-    rgb_min = np.percentile(rgb, 2)
-    rgb_max = np.percentile(rgb, 98)
-    rgb_norm = np.clip((rgb - rgb_min) / (rgb_max - rgb_min), 0, 1)
-    ax1.imshow(rgb_norm)
-    ax1.set_title('Input Image (RGB)', fontweight='bold')
-    ax1.axis('off')
-
-    # === 2. Segmentation Mask ===
-    ax2 = axes[1]
-    cmap = mcolors.ListedColormap(['black', 'cyan'])  # 0: black (daratan), 1: cyan (air)
-    ax2.imshow(predicted_mask, cmap=cmap, interpolation='none')
-    ax2.set_title('Segmentation Mask', fontweight='bold')
-    ax2.axis('off')
-
-    # Tambahkan legenda untuk mask
-    legend_patches = [
-        mpatches.Patch(color='black', label='Daratan'),
-        mpatches.Patch(color='cyan', label='Air')
-    ]
-    ax2.legend(handles=legend_patches, loc='upper right', fontsize='small', frameon=True)
-
-    # === 3. Overlay + Garis Pantai ===
-    ax3 = axes[2]
-    greyscale = np.mean(rgb_norm, axis=-1, keepdims=True)
-    ax3.imshow(greyscale[:, :, 0], cmap='gray')
-
-    mask_overlay = np.ma.masked_where(predicted_mask == 0, predicted_mask)
-    ax3.imshow(mask_overlay, cmap=mcolors.ListedColormap(['cyan']), alpha=0.5)
-
-    if len(coastline_gdf) > 0:
-        for idx, coastline in coastline_gdf.iterrows():
-            if coastline.geometry.geom_type == 'LineString':
-                coords = list(coastline.geometry.coords)
-                if len(coords) > 1:
-                    rows, cols = zip(*[rowcol(transform, x, y) for x, y in coords])
-                    ax3.plot(cols, rows, 'red', linewidth=2, alpha=1.0)
-
-    ax3.set_title('Overlay: Segmentation + Coastline', fontweight='bold')
-    ax3.axis('off')
-
-    plt.tight_layout()
-    viz_output_path = os.path.join(
-        os.path.dirname(output_path),
-        os.path.splitext(os.path.basename(output_path))[0] + '_visualization.png'
-    )
-    plt.savefig(viz_output_path, dpi=300, bbox_inches='tight')
-    print(f"Visualisasi disimpan di: {viz_output_path}")
-    plt.show()
     
 def parse_args():
     parser = argparse.ArgumentParser(description="Prediksi garis pantai dari citra Sentinel-2.")
     parser.add_argument('--image-path', type=str, required=True, help='Path ke citra TIFF input.')
     parser.add_argument('--model-path', type=str, required=True, help='Path ke model Keras (.h5).')
     parser.add_argument('--output-path', type=str, required=True, help='Path direktori output.')
-    parser.add_argument('--visualize', action='store_true', help='Tampilkan visualisasi hasil.')
     parser.add_argument('--threshold', type=float, default=0.6, 
                        help='Threshold NDWI untuk background (default: 0.2).')
     return parser.parse_args()
@@ -210,5 +153,3 @@ def main():
     coastline_gdf.to_file(shp_output_path)
     print(f"Garis pantai disimpan di: {shp_output_path}")
     
-    if args.visualize:
-        visualize_results(rgb_image, predicted_mask, coastline_gdf, transform, tiff_output_path)

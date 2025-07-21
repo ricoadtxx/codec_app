@@ -11,6 +11,7 @@ from datetime import datetime
 import logging
 
 from config.settings import SENTINEL2_BANDS
+from core.file_handler import FileHandler
 
 logger = logging.getLogger(__name__)
 
@@ -86,20 +87,6 @@ class UAVCoastlineDetector(BaseCoastlineDetector):
         except Exception as e:
             logger.error(f"UAV detection error: {str(e)}")
             return np.zeros(rgb_image.shape[:2], dtype=np.uint8), {}
-    
-    def save_mask_as_tiff(self, mask: np.ndarray, reference_profile: dict, output_path: str):
-        try:
-            # Update profile for output
-            profile = reference_profile.copy()
-            profile.update({
-                'count': 1,
-                'dtype': 'uint8',
-                'compress': 'lzw'
-            })
-            save_tiff(mask, profile, output_path)
-            logger.info(f"Mask saved to: {output_path}")
-        except Exception as e:
-            logger.error(f"Error saving mask: {str(e)}")
             
     def postprocess(self, detection_result: np.ndarray) -> np.ndarray:
         try:
@@ -199,20 +186,6 @@ class SentinelCoastlineDetector(BaseCoastlineDetector):
 
     def postprocess(self, mask: np.ndarray) -> np.ndarray:
         return mask
-    
-    def save_mask_as_tiff(self, mask: np.ndarray, reference_profile: dict, output_path: str):
-        try:
-            # Update profile for output
-            profile = reference_profile.copy()
-            profile.update({
-                'count': 1,
-                'dtype': 'uint8',
-                'compress': 'lzw'
-            })
-            save_tiff(mask, profile, output_path)
-            logger.info(f"Mask saved to: {output_path}")
-        except Exception as e:
-            logger.error(f"Error saving mask: {str(e)}")
 
     def convert_to_polygons(self, mask: np.ndarray, transform, crs):
         try:
@@ -248,41 +221,49 @@ class DetectionThread(QThread):
         self.detector = detector
         self.input_image_path = input_image_path
         self.input_image_array = input_image_array
+        self.file_handler = FileHandler()  # pastikan ini ada
 
     def run(self):
         try:
-            os.makedirs("output", exist_ok=True)
+            os.makedirs(self.file_handler.output_dir, exist_ok=True)
 
             base_name = os.path.basename(self.input_image_path).replace('.tif', '')
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_filename = f"{base_name}_deteksi_{timestamp}.tif"
-            output_path = os.path.join("output", output_filename)
+            output_path = os.path.join(self.file_handler.output_dir, output_filename)
 
             if self.detector.model_name == "UAV_CoastlineDetector":
                 preprocessed, profile, transform, crs = self.detector.preprocess(self.input_image_path)
                 mask, meta = self.detector.detect(preprocessed)
-
             elif self.detector.model_name == "Sentinel2_CoastlineDetector":
                 preprocessed = self.detector.preprocess(self.input_image_array)
                 mask, meta = self.detector.detect(preprocessed)
                 with rasterio.open(self.input_image_path) as src:
                     profile = src.profile
+                    transform = src.transform
+                    crs = src.crs
             else:
                 self.detectionFailed.emit("Model tidak dikenali")
                 return
 
             result = self.detector.postprocess(mask)
-            profile.update({
-                "count": 1,
-                "dtype": "uint8",
-                "compress": "lzw"
+
+            tiff_path = self.file_handler.save_tiff(result, profile, filename=output_filename)
+            
+            polygons_gdf = self.detector.convert_to_polygons(result, transform, crs)
+            if polygons_gdf is None or polygons_gdf.empty:
+                logger.warning("Polygons GeoDataFrame is empty or None")
+                shp_path = None
+            else:
+                shp_path = self.file_handler.save_coastline_shapefile(polygons_gdf, water_class=1)
+
+            meta.update({
+                'tiff_path': tiff_path,
+                'shapefile_path': shp_path
             })
 
-            with rasterio.open(output_path, "w", **profile) as dst:
-                dst.write(result.astype("uint8"), 1)
-
-            self.detectionFinished.emit(output_path, meta)
+            self.detectionFinished.emit(tiff_path or "", meta)
 
         except Exception as e:
+            logger.error(f"Error during detection: {str(e)}")
             self.detectionFailed.emit(str(e))
-

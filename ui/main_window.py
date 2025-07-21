@@ -135,6 +135,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.outputPanelComponent.inputPreviewLabel.clear()
         self.outputPanelComponent.outputImageLabel.clear()
         self.outputPanelComponent.outputShapefile.clear()
+        self.outputPanelComponent.clear_output_files()
 
     def onModelChanged(self, model_type):
         band_count = self.input_image_array.shape[2] if self.input_image_array is not None else 0
@@ -193,6 +194,9 @@ class MainWindow(QtWidgets.QMainWindow):
         print("Deteksi selesai dengan metadata:", meta)
         print(f"Hasil deteksi disimpan di: {output_path}")
         self.outputPanelComponent.updateOutputPreview(output_path)
+        shapefile_path = meta.get('shapefile_path', None) if meta else None
+        if shapefile_path:
+            self.outputPanelComponent.updateShapefilePreview(shapefile_path)
 
     def onDetectionFailed(self, error_msg):
         self.processSectionComponent.setProcessingState(False)

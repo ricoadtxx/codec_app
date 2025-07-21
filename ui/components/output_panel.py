@@ -1,12 +1,12 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect, QMessageBox
-from PyQt5.QtGui import QImage, QPixmap
+from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QColor
 
 import os
 import rasterio
 import numpy as np
-from rasterio.plot import reshape_as_image
+import shapefile  # pyshp
 
 from ..styles.component_styles import (
     OUTPUT_HEADER_STYLE, TAB_WIDGET_STYLE, PREVIEW_LABEL_STYLE,
@@ -24,33 +24,27 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.setupUi()
 
     def setupUi(self):
-        """Setup output panel UI components"""
         self.setStyleSheet(PANEL_STYLE)
 
-        # Add shadow effect
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(15)
         shadow.setColor(QtGui.QColor(0, 0, 0, 30))
         shadow.setOffset(0, 3)
         self.setGraphicsEffect(shadow)
 
-        # Layout
         self.rightLayout = QtWidgets.QVBoxLayout(self)
         self.rightLayout.setContentsMargins(25, 25, 25, 25)
         self.rightLayout.setSpacing(15)
 
-        # Header
         self.outputHeader = QtWidgets.QLabel("💾 Preview")
         self.outputHeader.setFont(QtGui.QFont("Segoe UI", 14, QtGui.QFont.Bold))
         self.outputHeader.setStyleSheet(OUTPUT_HEADER_STYLE)
         self.outputHeader.setAlignment(Qt.AlignCenter)
         self.rightLayout.addWidget(self.outputHeader)
 
-        # Tab Widget
         self.tabWidget = QtWidgets.QTabWidget()
         self.tabWidget.setStyleSheet(TAB_WIDGET_STYLE)
 
-        # Input Tab
         self.inputTab = QtWidgets.QWidget()
         self.inputTabLayout = QtWidgets.QVBoxLayout(self.inputTab)
         self.inputTabLayout.setContentsMargins(10, 10, 10, 10)
@@ -63,12 +57,10 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.inputPreviewLabel.setMinimumHeight(300)
         self.inputTabLayout.addWidget(self.inputPreviewLabel)
 
-        # TIFF Tab
         self.tiffTab = QtWidgets.QWidget()
         self.tiffTabLayout = QtWidgets.QVBoxLayout(self.tiffTab)
         self.tiffTabLayout.setContentsMargins(10, 10, 10, 10)
 
-        # Berikut ini adalah label outputImageLabel dan outputPathLabel yang kamu butuhkan
         self.outputImageLabel = QtWidgets.QLabel("🖼️ Hasil deteksi akan tampil di sini")
         self.outputImageLabel.setAlignment(Qt.AlignCenter)
         self.outputImageLabel.setMinimumHeight(300)
@@ -83,7 +75,6 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.tabWidget.addTab(self.inputTab, "📥 Input TIFF")
         self.tabWidget.addTab(self.tiffTab, "🖼️ Output Preview")
 
-        # SHP Tab
         self.shpTab = QtWidgets.QWidget()
         self.shpTabLayout = QtWidgets.QVBoxLayout(self.shpTab)
         self.shpTabLayout.setContentsMargins(10, 10, 10, 10)
@@ -94,13 +85,11 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.outputShapefile.setStyleSheet(PREVIEW_LABEL_STYLE)
         self.shpTabLayout.addWidget(self.outputShapefile)
 
-        # Add tabs
         self.tabWidget.addTab(self.inputTab, "📥 Input TIFF")
         self.tabWidget.addTab(self.tiffTab, "🖼️ Output Preview")
         self.tabWidget.addTab(self.shpTab, "🗺️ Shapefile Info")
         self.rightLayout.addWidget(self.tabWidget)
 
-        # Info label
         self.outputInfoLabel = QtWidgets.QLabel(
             "📊 Hasil akan otomatis ditampilkan setelah proses deteksi selesai\n"
             "📁 File output tersimpan di direktori: ./output/"
@@ -110,6 +99,7 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.outputInfoLabel.setWordWrap(True)
         self.outputInfoLabel.setStyleSheet(INFO_LABEL_STYLE)
         self.rightLayout.addWidget(self.outputInfoLabel)
+        
 
     def updateInputPreview(self, image_path):
         try:
@@ -142,7 +132,6 @@ class OutputPanelComponent(QtWidgets.QFrame):
                 array = array.astype(np.float32)
 
                 if is_uav:
-                    # Normalisasi UAV (0-255)
                     array -= array.min()
                     if array.max() > 0:
                         array /= array.max()
@@ -208,7 +197,49 @@ class OutputPanelComponent(QtWidgets.QFrame):
 
         except Exception as e:
             print(f"Gagal menampilkan output: {e}")
+
+    def updateShapefilePreview(self, shapefile_path):
+        try:
+            # Baca shapefile dengan pyshp
+            sf = shapefile.Reader(shapefile_path)
+            shapes = sf.shapes()
+
+            # Tentukan ukuran pixmap (misal 400x300)
+            w, h = 400, 300
+            pixmap = QPixmap(w, h)
+            pixmap.fill(Qt.white)  # background putih
+
+            painter = QPainter(pixmap)
+            pen = QPen(QColor(0, 102, 204), 2)  # garis biru tebal 2 px
+            painter.setPen(pen)
+
+            # Cari bounding box dari semua shape untuk scaling
+            all_points = [pt for shape in shapes for pt in shape.points]
+            xs = [pt[0] for pt in all_points]
+            ys = [pt[1] for pt in all_points]
+            min_x, max_x = min(xs), max(xs)
+            min_y, max_y = min(ys), max(ys)
+
+            def scale_point(x, y):
+                sx = (x - min_x) / (max_x - min_x) * (w - 20) + 10
+                sy = (max_y - y) / (max_y - min_y) * (h - 20) + 10  # invert y-axis
+                return int(sx), int(sy)
+
+            for shape in shapes:
+                points = [scale_point(x, y) for x, y in shape.points]
+                if len(points) > 1:
+                    for i in range(len(points) - 1):
+                        painter.drawLine(points[i][0], points[i][1], points[i+1][0], points[i+1][1])
+                else:
+                    # titik tunggal (jika ada)
+                    painter.drawPoint(points[0][0], points[0][1])
+
+            painter.end()
+
+            self.outputShapefile.setPixmap(pixmap)
+            self.outputShapefile.setAlignment(Qt.AlignCenter)
+        except Exception as e:
+            self.outputShapefile.setText("Gagal menampilkan shapefile")
+            print(f"[ERROR] updateShapefilePreview: {e}")
         
-    def updateShapefile(self, info_text):
-        """Update shapefile information display"""
-        self.outputShapefile.setPlainText(info_text)
+        

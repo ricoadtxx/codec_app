@@ -1,4 +1,3 @@
-"""Component-specific styles"""
 from .base_styles import GROUP_BOX_BASE, BUTTON_BASE
 
 HEADER_STYLE = """

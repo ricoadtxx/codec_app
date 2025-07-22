@@ -16,8 +16,6 @@ from core.file_handler import FileHandler
 logger = logging.getLogger(__name__)
 
 class BaseCoastlineDetector(ABC):
-    """Base class for coastline detection models"""
-    
     def __init__(self):
         self.model_name = "BaseDetector"
         self.is_loaded = False
@@ -25,22 +23,18 @@ class BaseCoastlineDetector(ABC):
     
     @abstractmethod
     def load_model(self) -> bool:
-        """Load the detection model"""
         pass
     
     @abstractmethod
     def preprocess(self, image: np.ndarray) -> np.ndarray:
-        """Preprocess image for detection"""
         pass
     
     @abstractmethod
     def detect(self, image: np.ndarray) -> Tuple[np.ndarray, Dict[str, Any]]:
-        """Perform coastline detection"""
         pass
     
     @abstractmethod
     def postprocess(self, detection_result: np.ndarray) -> np.ndarray:
-        """Postprocess detection results"""
         pass
 
 class UAVCoastlineDetector(BaseCoastlineDetector):
@@ -115,7 +109,7 @@ class SentinelCoastlineDetector(BaseCoastlineDetector):
     def __init__(self, model_path=None):
         super().__init__()
         self.model_name = "Sentinel2_CoastlineDetector"
-        self.model_path = model_path
+        self.model_path = model_path or "models/sentinel.h5"
         self.model = None
         self.ndwi_threshold = 0.5
         self.parameters = {
@@ -207,7 +201,7 @@ class CoastlineDetectorFactory:
         if model_type == "🚁 UAV":
             return UAVCoastlineDetector(model_path="models/uav.h5")
         elif model_type == "🛰️ Sentinel-2":
-            return SentinelCoastlineDetector(model_path="models/sentinel.keras")
+            return SentinelCoastlineDetector(model_path="models/sentinel.h5")
         else:
             logger.error(f"Unknown model type: {model_type}")
             return None
@@ -221,7 +215,7 @@ class DetectionThread(QThread):
         self.detector = detector
         self.input_image_path = input_image_path
         self.input_image_array = input_image_array
-        self.file_handler = FileHandler()  # pastikan ini ada
+        self.file_handler = FileHandler()
 
     def run(self):
         try:

@@ -1,4 +1,3 @@
-"""Header component for the main window"""
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
@@ -10,29 +9,24 @@ class HeaderComponent(QtWidgets.QFrame):
         self.setupUi()
     
     def setupUi(self):
-        """Setup header UI components"""
         self.setFixedHeight(120)
         self.setStyleSheet(HEADER_STYLE)
         
-        # Add shadow effect
         shadow = QGraphicsDropShadowEffect()
         shadow.setBlurRadius(20)
         shadow.setColor(QtGui.QColor(0, 0, 0, 50))
         shadow.setOffset(0, 5)
         self.setGraphicsEffect(shadow)
         
-        # Layout
         self.headerLayout = QtWidgets.QVBoxLayout(self)
         self.headerLayout.setContentsMargins(30, 20, 30, 20)
         
-        # Title
         self.labelTitle = QtWidgets.QLabel("🌊 Coastline Detection & Extraction")
         font_title = QtGui.QFont("Segoe UI", 22, QtGui.QFont.Bold)
         self.labelTitle.setFont(font_title)
         self.labelTitle.setAlignment(Qt.AlignCenter)
         self.labelTitle.setStyleSheet(TITLE_STYLE)
         
-        # Subtitle
         self.labelSubtitle = QtWidgets.QLabel("Advanced Satellite & UAV Imagery Processing")
         font_subtitle = QtGui.QFont("Segoe UI", 12)
         self.labelSubtitle.setFont(font_subtitle)

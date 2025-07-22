@@ -6,7 +6,7 @@ from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QColor
 import os
 import rasterio
 import numpy as np
-import shapefile  # pyshp
+import shapefile
 
 from ..styles.component_styles import (
     OUTPUT_HEADER_STYLE, TAB_WIDGET_STYLE, PREVIEW_LABEL_STYLE,
@@ -90,10 +90,9 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.tabWidget.addTab(self.shpTab, "🗺️ Shapefile Info")
         self.rightLayout.addWidget(self.tabWidget)
 
-        # Button download
         self.downloadButton = QtWidgets.QPushButton("📥 Download Output")
         self.downloadButton.setCursor(Qt.PointingHandCursor)
-        self.downloadButton.setEnabled(False)  # Pastikan ini ada
+        self.downloadButton.setEnabled(True)
         self.downloadButton.setStyleSheet("padding: 6px 12px;")
         self.layout().addWidget(self.downloadButton)
 
@@ -177,8 +176,8 @@ class OutputPanelComponent(QtWidgets.QFrame):
                 height, width = mask.shape
                 rgb_image = np.zeros((height, width, 3), dtype=np.uint8)
 
-                rgb_image[mask == 0] = [160, 160, 160]  # abu-abu
-                rgb_image[mask == 1] = [0, 102, 204]    # biru laut
+                rgb_image[mask == 0] = [160, 160, 160]
+                rgb_image[mask == 1] = [0, 102, 204]
 
                 qimage = QImage(rgb_image.data, width, height, width * 3, QImage.Format_RGB888)
                 pixmap = QPixmap.fromImage(qimage)
@@ -196,20 +195,17 @@ class OutputPanelComponent(QtWidgets.QFrame):
 
     def updateShapefilePreview(self, shapefile_path):
         try:
-            # Baca shapefile dengan pyshp
             sf = shapefile.Reader(shapefile_path)
             shapes = sf.shapes()
 
-            # Tentukan ukuran pixmap (misal 400x300)
             w, h = 400, 300
             pixmap = QPixmap(w, h)
-            pixmap.fill(Qt.white)  # background putih
+            pixmap.fill(Qt.white)
 
             painter = QPainter(pixmap)
-            pen = QPen(QColor(0, 102, 204), 2)  # garis biru tebal 2 px
+            pen = QPen(QColor(0, 102, 204), 2)
             painter.setPen(pen)
 
-            # Cari bounding box dari semua shape untuk scaling
             all_points = [pt for shape in shapes for pt in shape.points]
             xs = [pt[0] for pt in all_points]
             ys = [pt[1] for pt in all_points]
@@ -218,7 +214,7 @@ class OutputPanelComponent(QtWidgets.QFrame):
 
             def scale_point(x, y):
                 sx = (x - min_x) / (max_x - min_x) * (w - 20) + 10
-                sy = (max_y - y) / (max_y - min_y) * (h - 20) + 10  # invert y-axis
+                sy = (max_y - y) / (max_y - min_y) * (h - 20) + 10
                 return int(sx), int(sy)
 
             for shape in shapes:
@@ -227,7 +223,6 @@ class OutputPanelComponent(QtWidgets.QFrame):
                     for i in range(len(points) - 1):
                         painter.drawLine(points[i][0], points[i][1], points[i+1][0], points[i+1][1])
                 else:
-                    # titik tunggal (jika ada)
                     painter.drawPoint(points[0][0], points[0][1])
 
             painter.end()
@@ -243,20 +238,15 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.downloadButton.clicked.connect(self.handle_download)
 
     def handle_download(self):
-        if not hasattr(self, 'file_handler'):
-            QMessageBox.warning(self, "Error", "FileHandler belum terhubung.")
+        if not self.file_handler:
+            QMessageBox.warning(self, "Error", "FileHandler belum tersedia.")
             return
 
         zip_path = self.file_handler.download_and_clear_outputs(parent_widget=self)
-        if zip_path:
-            QMessageBox.information(self, "Berhasil", f"Hasil berhasil disimpan:\n{zip_path}")
-            # Tidak perlu membersihkan tampilan UI!
-        else:
-            QMessageBox.warning(self, "Gagal", "Download dibatalkan atau tidak ada file.")
-            
-    # output_panel.py
-    def set_detection_state(self, is_processing: bool):
-        """Tentukan apakah proses deteksi sedang berjalan atau sudah selesai."""
-        self.downloadButton.setEnabled(not is_processing)
 
+        if not zip_path:
+            QMessageBox.warning(self, "Gagal", "Tidak ada file output untuk dikompres.")
+            return
+
+        QMessageBox.information(self, "Berhasil", f"Hasil disimpan ke:\n{zip_path}")
 

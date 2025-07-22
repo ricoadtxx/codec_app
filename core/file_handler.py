@@ -5,7 +5,7 @@ import rasterio
 import geopandas as gpd
 import shutil, zipfile, tempfile, logging
 
-from PyQt5.QtWidgets import QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QFileDialog
 
 from core.predict import extract_coastline
 
@@ -30,8 +30,8 @@ class FileHandler:
             
             file_size_mb = path.stat().st_size / (1024 * 1024)
 
-            if file_size_mb > 500 * 1024 * 1024:
-                return False, f"Ukuran file terlalu besar ({file_size_mb:.2f} MB). Maksimal 500 MB."
+            if file_size_mb > 500:
+                return False, f"Ukuran file terlalu besar ({file_size_mb:.2f} MB). Maksimal 500 MB. \nSilakan pilih file yang kurang dari 500 MB."
             elif file_size_mb >= 100:
                 return True, f"Ukuran file besar ({file_size_mb:.2f} MB). Proses deteksi mungkin akan memakan waktu lebih lama."
 
@@ -115,18 +115,44 @@ class FileHandler:
         except Exception as e:
             logger.error(f"Error saving coastline shapefile: {str(e)}")
             return None
+        
+    def clean_files(self, parent_widget=None):
+        try:
+            output_files = list(self.output_dir.glob("*"))
+            if not output_files:
+                # Kalau sudah kosong, bisa kasih info atau langsung return
+                return
+
+            for file in output_files:
+                file.unlink()
+
+            # Jika ada file zip yang tersisa (misal dari proses lain), hapus juga
+            zip_path = self.output_dir / "hasil_output.zip"
+            if zip_path.exists():
+                zip_path.unlink()
+
+            # Optional: update UI di sini, misal disable tombol download, clear preview, dsb
+            if hasattr(self, 'downloadButton'):
+                self.downloadButton.setEnabled(False)
+
+            if parent_widget:
+                logger.info("Semua file output telah dihapus.")
+
+        except Exception as e:
+            if parent_widget:
+                logger.error(f"Gagal membersihkan file output: {str(e)}")
+
 
     def download_and_clear_outputs(self, parent_widget=None) -> Optional[str]:
         try:
             output_files = list(self.output_dir.glob("*"))
             if not output_files:
-                logger.info("Tidak ada file output untuk dikompres.")
                 return None
 
             zip_filename = self.output_dir / "hasil_output.zip"
             with zipfile.ZipFile(zip_filename, 'w') as zipf:
                 for file in output_files:
-                    if file != zip_filename:  # Jangan zip file zip itu sendiri
+                    if file != zip_filename:
                         zipf.write(file, arcname=file.name)
 
             save_path, _ = QFileDialog.getSaveFileName(
@@ -142,9 +168,10 @@ class FileHandler:
             shutil.copy(zip_filename, save_path)
             logger.info(f"Hasil output disimpan ke: {save_path}")
 
-            # Hapus semua file di folder output
             for file in output_files:
                 file.unlink()
+                
+            zip_filename.unlink()
 
             return save_path
 

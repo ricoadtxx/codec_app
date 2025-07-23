@@ -4,13 +4,13 @@ import rasterio
 from abc import ABC, abstractmethod
 from typing import Optional, Tuple, Dict, Any
 from keras.models import load_model
-from core.predict import preprocess_image, morphological_smooth, predict, save_tiff, mask_to_polygons, extract_coastline
 from PyQt5.QtCore import QThread, pyqtSignal
 from datetime import datetime
 
 import logging
 
 from config.settings import SENTINEL2_BANDS
+from core.predict import preprocess_image, morphological_smooth, predict, save_tiff, mask_to_polygons, extract_coastline
 from core.file_handler import FileHandler
 
 logger = logging.getLogger(__name__)

@@ -3,12 +3,11 @@ from typing import Optional, Dict, Any
 import numpy as np
 import rasterio
 import geopandas as gpd
-import shutil, zipfile, tempfile, logging
+import shutil, zipfile, logging
 
 from PyQt5.QtWidgets import QFileDialog
 
 from core.predict import extract_coastline
-
 
 logger = logging.getLogger(__name__)
 
@@ -120,18 +119,15 @@ class FileHandler:
         try:
             output_files = list(self.output_dir.glob("*"))
             if not output_files:
-                # Kalau sudah kosong, bisa kasih info atau langsung return
                 return
 
             for file in output_files:
                 file.unlink()
 
-            # Jika ada file zip yang tersisa (misal dari proses lain), hapus juga
             zip_path = self.output_dir / "hasil_output.zip"
             if zip_path.exists():
                 zip_path.unlink()
 
-            # Optional: update UI di sini, misal disable tombol download, clear preview, dsb
             if hasattr(self, 'downloadButton'):
                 self.downloadButton.setEnabled(False)
 
@@ -163,6 +159,7 @@ class FileHandler:
             )
 
             if not save_path:
+                zip_filename.unlink(missing_ok=True)
                 return None
 
             shutil.copy(zip_filename, save_path)
@@ -170,7 +167,6 @@ class FileHandler:
 
             for file in output_files:
                 file.unlink()
-                
             zip_filename.unlink()
 
             return save_path
@@ -178,4 +174,3 @@ class FileHandler:
         except Exception as e:
             logger.error(f"Gagal mendownload dan membersihkan output: {str(e)}")
             return None
-

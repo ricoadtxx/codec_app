@@ -39,10 +39,9 @@ def choose_model_by_band_count(band_count: int) -> str | None:
 
 def resource_path(relative_path):
     try:
-        # Saat dijalankan dari .exe (PyInstaller)
         base_path = sys._MEIPASS
-    except AttributeError:
-        # Saat dijalankan dari script biasa
+        print("📦 Running from bundle. _MEIPASS =", base_path)
+    except Exception:
         base_path = os.path.abspath(".")
-
+        print("🛠️ Running from script. base_path =", base_path)
     return os.path.join(base_path, relative_path)

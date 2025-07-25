@@ -40,30 +40,34 @@ class SplashScreen(QSplashScreen):
         self.close()
 
 def main():
+    print("➡️ Starting app...")
+
     app = QApplication(sys.argv)
-    
-    app.setApplicationName("CoDec App")
-    app.setApplicationVersion("1.0")
-    app.setOrganizationName("CoDec Development")
-    
-    app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
-    app.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
-    
-    app.setWindowIcon(QIcon('assets/codec.png'))
-    
+    print("✅ QApplication dibuat")
+
+    from ui.main_window import MainWindow
+    print("✅ MainWindow berhasil diimport")
+
+    app.setWindowIcon(QIcon(resource_path("assets/codec.png")))
+    print("✅ Icon berhasil di-set")
+
     splash = SplashScreen()
     splash.show_splash(3000)
-    
+    print("✅ Splash screen ditampilkan")
+
     app.processEvents()
-    
+
     window = MainWindow()
-    
+    print("✅ Main window instance dibuat")
+
     def show_main_window():
+        print("🪟 Menampilkan main window")
         splash.close()
         window.show()
-    
+
     QTimer.singleShot(3000, show_main_window)
-    
+
+    print("🌀 Menjalankan event loop")
     return app.exec_()
 
 if __name__ == "__main__":

@@ -49,7 +49,7 @@ def main():
     app.setAttribute(Qt.AA_EnableHighDpiScaling, True)
     app.setAttribute(Qt.AA_UseHighDpiPixmaps, True)
     
-    app.setWindowIcon(QIcon('assets/codec.png'))
+    app.setWindowIcon(QIcon(resource_path('assets/codec.png')))
     
     splash = SplashScreen()
     splash.show_splash(3000)

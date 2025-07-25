@@ -1,5 +1,6 @@
 from PyQt5 import QtGui, QtWidgets
 from PyQt5.QtWidgets import QGraphicsDropShadowEffect
+from PyQt5.QtCore import Qt
 from ..styles.component_styles import PROCESS_SECTION_STYLE, RUN_BUTTON_STYLE
 
 class ProcessSectionComponent(QtWidgets.QGroupBox):
@@ -15,6 +16,7 @@ class ProcessSectionComponent(QtWidgets.QGroupBox):
         self.processLayout.setContentsMargins(15, 15, 15, 15)
         
         self.btnRun = QtWidgets.QPushButton("🚀 Jalankan")
+        self.btnRun.setCursor(Qt.PointingHandCursor)
         self.btnRun.setFixedHeight(50)
         self.btnRun.setFont(QtGui.QFont("Segoe UI", 10, QtGui.QFont.Bold))
         self.btnRun.setStyleSheet(RUN_BUTTON_STYLE)

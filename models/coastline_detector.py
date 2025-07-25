@@ -10,7 +10,7 @@ from datetime import datetime
 import logging
 
 from config.settings import SENTINEL2_BANDS
-from core.predict import preprocess_image, morphological_smooth, predict, save_tiff, mask_to_polygons, extract_coastline
+from core.predict import preprocess_image, morphological_smooth, predict, mask_to_polygons, extract_coastline
 from core.file_handler import FileHandler
 
 logger = logging.getLogger(__name__)

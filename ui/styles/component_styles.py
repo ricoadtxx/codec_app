@@ -132,6 +132,30 @@ RUN_BUTTON_STYLE = """
     }
 """
 
+DOWNLOAD_BUTTON_STYLE = """
+    QPushButton {
+        background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                  stop: 0 #3498db, stop: 1 #2980b9);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 15px;
+        height: 50px;
+        font-weight: bold;
+    }
+    QPushButton:hover {
+        background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                  stop: 0 #5dade2, stop: 1 #3498db);
+    }
+    QPushButton:pressed {
+        background: #2471a3;
+    }
+    QPushButton:disabled {
+        background: #bdc3c7;
+        color: #7f8c8d;
+    }
+"""
+
 OUTPUT_HEADER_STYLE = """
     QLabel {
         color: white;
@@ -159,8 +183,8 @@ TAB_WIDGET_STYLE = """
         border-top-right-radius: 6px;
         color: #2c3e50;
         font-weight: bold;
-        min-width: 120px;
-        max-width: 160px;
+        min-width: 150px;
+        max-width: 200px;
     }
     QTabBar::tab:selected {
         background-color: #f39c12;

@@ -22,6 +22,6 @@ LEFT_PANEL_WIDTH = 450
 OUTPUT_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "output")
 ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets")
 
-MODEL_TYPES = ["Pilih Model","🚁 UAV", "🛰️ Sentinel-2"]
+MODEL_TYPES = ["Pilih Model","✈️ UAV", "🛰️ Sentinel-2"]
 
 os.makedirs(OUTPUT_DIR, exist_ok=True)

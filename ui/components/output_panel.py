@@ -5,7 +5,7 @@ import os
 
 from ..styles.component_styles import (
     OUTPUT_HEADER_STYLE, TAB_WIDGET_STYLE, PREVIEW_LABEL_STYLE,
-    INPUT_PREVIEW_LABEL_STYLE
+    INPUT_PREVIEW_LABEL_STYLE, DOWNLOAD_BUTTON_STYLE
 )
 from ..styles.base_styles import PANEL_STYLE
 from utils.image_processor import (
@@ -80,16 +80,19 @@ class OutputPanelComponent(QtWidgets.QFrame):
         self.shpTabLayout.addWidget(self.outputShapefile)
 
         # Add Tabs
-        self.tabWidget.addTab(self.inputTab, "📥 Input TIFF")
-        self.tabWidget.addTab(self.tiffTab, "🖼️ Output Preview")
-        self.tabWidget.addTab(self.shpTab, "🗺️ Shapefile Info")
+        self.tabWidget.addTab(self.inputTab, "📥 Input Preview")
+        self.tabWidget.addTab(self.tiffTab, "🖼️ Tiff Preview")
+        self.tabWidget.addTab(self.shpTab, "🗺️ Shapefile Preview")
+        self.tabWidget.setCursor(Qt.PointingHandCursor)
         self.rightLayout.addWidget(self.tabWidget)
 
         # Download Button
         self.downloadButton = QtWidgets.QPushButton("📥 Download Output")
         self.downloadButton.setCursor(Qt.PointingHandCursor)
         self.downloadButton.setEnabled(True)
-        self.downloadButton.setStyleSheet("padding: 6px 12px;")
+        self.downloadButton.setFixedHeight(50)
+        self.downloadButton.setFont(QtGui.QFont("Segoe UI", 10, QtGui.QFont.Bold))
+        self.downloadButton.setStyleSheet(DOWNLOAD_BUTTON_STYLE)
         self.layout().addWidget(self.downloadButton)
 
     def updateInputPreview(self, image_path):

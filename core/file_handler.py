@@ -157,7 +157,7 @@ class FileHandler:
                 str(zip_filename),
                 "ZIP files (*.zip)"
             )
-
+    
             if not save_path:
                 zip_filename.unlink(missing_ok=True)
                 return None

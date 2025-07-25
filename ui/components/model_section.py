@@ -1,4 +1,5 @@
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtGui, QtWidgets
+from PyQt5.QtCore import Qt
 from ..styles.component_styles import MODEL_SECTION_STYLE, COMBO_BOX_STYLE
 from config.settings import MODEL_TYPES
 
@@ -20,6 +21,7 @@ class ModelSectionComponent(QtWidgets.QGroupBox):
         self.labelModel.setStyleSheet("color: #000; border: none;")
         
         self.btnSelectType = QtWidgets.QComboBox()
+        self.btnSelectType.setCursor(Qt.PointingHandCursor)
         self.btnSelectType.setFixedHeight(40)
         self.btnSelectType.setFont(QtGui.QFont("Segoe UI", 10))
         self.btnSelectType.addItems(MODEL_TYPES)

@@ -21,6 +21,7 @@ class FileSectionComponent(QtWidgets.QGroupBox):
         self.fileLayout.setSpacing(8)
         
         self.btnBrowse = QtWidgets.QPushButton("📂 Pilih Citra")
+        self.btnBrowse.setCursor(Qt.PointingHandCursor)
         self.btnBrowse.setFixedHeight(40)
         self.btnBrowse.setFont(QtGui.QFont("Segoe UI", 10, QtGui.QFont.Bold))
         self.btnBrowse.setStyleSheet(FILE_BUTTON_STYLE)
@@ -33,6 +34,7 @@ class FileSectionComponent(QtWidgets.QGroupBox):
         self.labelPath.setStyleSheet(PATH_LABEL_STYLE)
         
         self.btnClear = QtWidgets.QPushButton("🗑 Hapus File")
+        self.btnClear.setCursor(Qt.PointingHandCursor)
         self.btnClear.setFixedHeight(35)
         self.btnClear.setFont(QtGui.QFont("Segoe UI", 9, QtGui.QFont.Bold))
         self.btnClear.setStyleSheet(CLEAR_BUTTON_STYLE)

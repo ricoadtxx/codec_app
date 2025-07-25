@@ -4,3 +4,7 @@ ui.py
 *.keras
 *.h5
 *.tif
+
+build/
+dist/
+*.spec

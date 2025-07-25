@@ -12,6 +12,7 @@ import logging
 from config.settings import SENTINEL2_BANDS
 from core.predict import preprocess_image, morphological_smooth, predict, mask_to_polygons, extract_coastline
 from core.file_handler import FileHandler
+from utils.helper import resource_path
 
 logger = logging.getLogger(__name__)
 
@@ -52,7 +53,8 @@ class UAVCoastlineDetector(BaseCoastlineDetector):
 
     def load_model(self) -> bool:
         try:
-            self.model = load_model(self.model_path, compile=False)
+            full_path = resource_path(self.model_path)
+            self.model = load_model(full_path, compile=False)
             self.is_loaded = True
             logger.info("UAV model loaded successfully")
             return True
@@ -121,9 +123,8 @@ class SentinelCoastlineDetector(BaseCoastlineDetector):
 
     def load_model(self) -> bool:
         try:
-            if not self.model_path:
-                raise ValueError("Model path is not set.")
-            self.model = load_model(self.model_path, compile=False)
+            full_path = resource_path(self.model_path)
+            self.model = load_model(full_path, compile=False)
             self.is_loaded = True
             logger.info("Sentinel-2 coastline detection model loaded successfully")
             return True

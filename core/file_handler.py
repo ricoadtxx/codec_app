@@ -108,6 +108,8 @@ class FileHandler:
                 filename = self.generate_output_filename("coastline", ".shp")
 
             output_path = self.output_dir / filename
+            print(f"[DEBUG] Menyimpan shapefile ke: {output_path}")
+            print(f"[DEBUG] Folder output ada? {self.output_dir.exists()}")
             coastline_gdf.to_file(output_path)
             logger.info(f"Coastline shapefile saved to: {output_path}")
             return str(output_path)

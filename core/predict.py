@@ -8,12 +8,7 @@ import geopandas as gpd
 from shapely.geometry import shape, LineString
 import tensorflow as tf
 from keras.models import load_model
-from keras import backend as K
 from tqdm import tqdm
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from rasterio.transform import rowcol
-import matplotlib.patches as mpatches
 
 
 def preprocess_image(image_path):

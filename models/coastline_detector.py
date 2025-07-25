@@ -47,7 +47,7 @@ class UAVCoastlineDetector(BaseCoastlineDetector):
             'min_area': 100,
             'gaussian_blur': (5, 5)
         }
-        self.model_path = model_path or "models/uav_model.h5"
+        self.model_path = model_path or "models/uav.h5"
         self.model = None
         self.metadata = {}
 
@@ -199,7 +199,7 @@ class SentinelCoastlineDetector(BaseCoastlineDetector):
 class CoastlineDetectorFactory:
     @staticmethod
     def create_detector(model_type: str) -> Optional[BaseCoastlineDetector]:
-        if model_type == "🚁 UAV":
+        if model_type == "✈️ UAV":
             return UAVCoastlineDetector(model_path="models/uav.h5")
         elif model_type == "🛰️ Sentinel-2":
             return SentinelCoastlineDetector(model_path="models/sentinel.h5")

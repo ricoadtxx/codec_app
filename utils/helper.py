@@ -1,3 +1,5 @@
+import os
+import sys
 from PyQt5.QtWidgets import QMessageBox
 import rasterio
 import numpy as np
@@ -34,3 +36,13 @@ def choose_model_by_band_count(band_count: int) -> str | None:
         return "🛰️ Sentinel-2"
     else:
         return None
+
+def resource_path(relative_path):
+    try:
+        # Saat dijalankan dari .exe (PyInstaller)
+        base_path = sys._MEIPASS
+    except AttributeError:
+        # Saat dijalankan dari script biasa
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)

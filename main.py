@@ -3,6 +3,7 @@ import os
 from PyQt5.QtWidgets import QApplication,  QSplashScreen
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon, QPixmap
+from utils.helper import resource_path
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -12,7 +13,7 @@ class SplashScreen(QSplashScreen):
     def __init__(self):
         super().__init__()
         
-        pixmap = QPixmap('assets/codec.png')
+        pixmap = QPixmap(resource_path('assets/codec.png'))
         
         if not pixmap.isNull():
             pixmap = pixmap.scaled(500, 500, Qt.KeepAspectRatio, Qt.SmoothTransformation)

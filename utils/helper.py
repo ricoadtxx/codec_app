@@ -23,7 +23,7 @@ def load_raster_image(file_path):
         return None, 0, str(e)
 
 def validate_model_selection(model_type, band_count):
-    if model_type == "🚁 UAV" and band_count not in [3, 4]:
+    if model_type == "✈️ UAV" and band_count not in [3, 4]:
         return False, "Model UAV memerlukan citra dengan 3 atau 4 band. Mohon pilih file yang sesuai."
     elif model_type == "🛰️ Sentinel-2" and band_count <= 4:
         return False, "Model Sentinel-2 memerlukan citra dengan lebih dari 4 band. Mohon pilih file yang sesuai."
@@ -31,7 +31,7 @@ def validate_model_selection(model_type, band_count):
 
 def choose_model_by_band_count(band_count: int) -> str | None:
     if band_count in [3, 4]:
-        return "🚁 UAV"
+        return "✈️ UAV"
     elif band_count > 4:
         return "🛰️ Sentinel-2"
     else:

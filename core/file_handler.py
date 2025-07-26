@@ -7,7 +7,7 @@ import shutil, zipfile, logging
 
 from PyQt5.QtWidgets import QFileDialog
 
-from core.predict import extract_coastline
+from utils.postprocess import extract_coastline
 
 logger = logging.getLogger(__name__)
 

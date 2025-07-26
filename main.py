@@ -1,5 +1,5 @@
 import sys
-import os
+import os, logging
 from PyQt5.QtWidgets import QApplication,  QSplashScreen
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QIcon, QPixmap
@@ -8,6 +8,17 @@ from utils.helper import resource_path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from ui.main_window import MainWindow
+
+logging.basicConfig(
+    filename='app_debug.log',
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+def exception_hook(exctype, value, traceback):
+    logging.exception("Unhandled exception", exc_info=(exctype, value, traceback))
+
+sys.excepthook = exception_hook
 
 class SplashScreen(QSplashScreen):
     def __init__(self):

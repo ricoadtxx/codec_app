@@ -9,10 +9,10 @@ from datetime import datetime
 
 import logging
 
-from config.settings import SENTINEL2_BANDS
-from core.predict import preprocess_image, morphological_smooth, predict, mask_to_polygons, extract_coastline
+from utils.preprocess import preprocess_image_uav, preprocess_sentinel2
+from utils.postprocess import  morphological_smooth, mask_to_polygons, extract_coastline
 from core.file_handler import FileHandler
-from utils.helper import resource_path
+from utils.helper import resource_path, run_patch_prediction
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +35,7 @@ class BaseCoastlineDetector(ABC):
         pass
     
     @abstractmethod
-    def postprocess(self, detection_result: np.ndarray) -> np.ndarray:
+    def postprocess(self, transform, crs, detection_result: np.ndarray) -> np.ndarray:
         pass
 
 class UAVCoastlineDetector(BaseCoastlineDetector):
@@ -64,7 +64,7 @@ class UAVCoastlineDetector(BaseCoastlineDetector):
 
     def preprocess(self, image_path: str) -> Tuple[np.ndarray, dict, Any, Any]:
         try:
-            rgb_image, profile, transform, crs = preprocess_image(image_path)
+            rgb_image, profile, transform, crs = preprocess_image_uav(image_path)
             logger.info("UAV image preprocessing completed")
             return rgb_image, profile, transform, crs
         except Exception as e:
@@ -73,39 +73,52 @@ class UAVCoastlineDetector(BaseCoastlineDetector):
 
     def detect(self, rgb_image: np.ndarray, tile_size: int = 256) -> Tuple[np.ndarray, Dict[str, Any]]:
         try:
-            mask = predict(self.model, rgb_image, tile_size)
+            mask = run_patch_prediction(
+                model=self.model,
+                image=rgb_image,
+                tile_size=256,
+                channels_last=True,
+                is_multichannel=True
+            )
             self.metadata = {
                 'method': 'uav_model_segmentation',
-                'tile_size': tile_size
+                'tile_size': tile_size,
+                'input_shape': rgb_image.shape,
             }
-            logger.info("UAV coastline detection completed")
             return mask, self.metadata
+
         except Exception as e:
-            logger.error(f"UAV detection error: {str(e)}")
+            logger.exception(f"UAV detection error: {str(e)}")
             return np.zeros(rgb_image.shape[:2], dtype=np.uint8), {}
+
+    def postprocess(self, detection_result: np.ndarray, transform, crs, water_class: int = 1) -> dict:
+        try:
+            smoothed_mask = morphological_smooth(detection_result, kernel_size=7, iterations=1)
             
-    def postprocess(self, detection_result: np.ndarray) -> np.ndarray:
-        try:
-            smoothed = morphological_smooth(detection_result, kernel_size=7, iterations=1)
-            logger.info("UAV postprocessing completed")
-            return smoothed
-        except Exception as e:
-            logger.error(f"UAV postprocessing error: {str(e)}")
-            return detection_result
+            polygons_gdf = mask_to_polygons(smoothed_mask, transform, crs)
+            
+            coastline_gdf = None
+            
+            if polygons_gdf is not None and not polygons_gdf.empty:
+                coastline_gdf = extract_coastline(polygons_gdf, water_class)
+            else:
+                logger.warning("Polygons Kosong")
+                
+            logger.info("Proses UAV Selesai")
+            
+            return {
+                'mask': smoothed_mask,
+                'polygons': polygons_gdf,
+                'coastline': coastline_gdf
+            }
         
-    def convert_to_polygons(self, mask: np.ndarray, transform, crs):
-        try:
-            return mask_to_polygons(mask, transform, crs)
         except Exception as e:
-            logger.error(f"Error converting to polygons: {str(e)}")
-            return None
-        
-    def get_coastline(self, polygons_gdf, water_class: int = 1):
-        try:
-            return extract_coastline(polygons_gdf, water_class)
-        except Exception as e:
-            logger.error(f"Error extracting coastline: {str(e)}")
-            return None
+            logger.error(f"Proses UAV Error: {str(e)}")
+            return{
+                'mask': detection_result,
+                'polygons': None,
+                'coastline': None
+            }
 
 class SentinelCoastlineDetector(BaseCoastlineDetector):
     def __init__(self, model_path=None):
@@ -132,69 +145,59 @@ class SentinelCoastlineDetector(BaseCoastlineDetector):
             logger.error(f"Error loading Sentinel-2 model: {str(e)}")
             return False
 
-    def preprocess(self, image_array: np.ndarray) -> np.ndarray:
-        bands = np.zeros((13, image_array.shape[0], image_array.shape[1]), dtype=np.float32)
-        for i in range(min(image_array.shape[2], 13)):
-            bands[i] = image_array[:, :, i].astype(np.float32)
-
-        green = bands[SENTINEL2_BANDS['B3']]
-        nir = bands[SENTINEL2_BANDS['B8']]
-
-        denom = green + nir
-        denom = np.where(denom == 0, 1e-8, denom)
-        ndwi = (green - nir) / denom
-        ndwi = np.nan_to_num(ndwi, nan=0.0, posinf=1.0, neginf=-1.0)
-        ndwi_norm = (ndwi + 1) / 2
-        ndwi_norm = np.where(ndwi_norm < self.ndwi_threshold, 0.0, ndwi_norm)
-
-        self.bands = bands
-        self.ndwi = ndwi
-        return np.expand_dims(ndwi_norm, axis=0)
-
-    def detect(self, ndwi_stack: np.ndarray, tile_size: int = 256) -> Tuple[np.ndarray, Dict[str, Any]]:
-        ndwi = ndwi_stack[0]
-        h, w = ndwi.shape
-        mask = np.zeros((h, w), dtype=np.uint8)
-        rows = list(range(0, h, tile_size))
-        cols = list(range(0, w, tile_size))
-
-        for row in rows:
-            for col in cols:
-                patch_h = min(tile_size, h - row)
-                patch_w = min(tile_size, w - col)
-                patch = ndwi[row:row + patch_h, col:col + patch_w]
-
-                padded = np.zeros((tile_size, tile_size), dtype=np.float32)
-                padded[:patch_h, :patch_w] = patch
-
-                input_patch = np.expand_dims(padded, axis=(0, -1))
-                pred = self.model.predict(input_patch, verbose=0)
-                pred_mask = np.argmax(pred[0], axis=-1).astype(np.uint8)
-                mask[row:row + patch_h, col:col + patch_w] = pred_mask[:patch_h, :patch_w]
-
-        self.metadata = {
-            'tile_size': tile_size,
-            'confidence': 0.85,
-            'processing_time': 0.0
-        }
-        return mask, self.metadata
-
-    def postprocess(self, mask: np.ndarray) -> np.ndarray:
-        return mask
-
-    def convert_to_polygons(self, mask: np.ndarray, transform, crs):
+    def preprocess(self, image_path: str) -> Tuple[np.ndarray, dict]:
         try:
-            return mask_to_polygons(mask, transform, crs)
+            ndwi_stack, profile, transform, crs, bands = preprocess_sentinel2(image_path, ndwi_threshold=self.ndwi_threshold)
+            logger.info("Preprocess sentinel-2 berhasil")
+            return ndwi_stack, profile, transform, crs, bands
         except Exception as e:
-            logger.error(f"Error converting to polygons: {str(e)}")
-            return None
+            logger.error(f"UAV preprocessing error: {str(e)}")
+            raise
+
+    def detect(self, ndwi_stack: np.ndarray, tile_size: int = 256) -> Tuple[np.ndarray, dict]:
+        try:
+            ndwi = ndwi_stack[0]
+            mask = run_patch_prediction(
+                model=self.model,
+                image=ndwi,
+                tile_size=256,
+                channels_last=True,
+                is_multichannel=False
+            )
+            self.metadata = {'method': 'sentinel_segmentation', 'tile_size': tile_size}
+            return mask, self.metadata
         
-    def get_coastline(self, polygons_gdf, water_class: int = 1):
-        try:
-            return extract_coastline(polygons_gdf, water_class)
         except Exception as e:
-            logger.error(f"Error extracting coastline: {str(e)}")
-            return None
+            logger.error(f"Sentinel detection error: {e}")
+            return np.zeros(ndwi_stack.shape[1:3], dtype=np.uint8), {}
+    
+    def postprocess(self, detection_result: np.ndarray, transform, crs, water_class: int = 1) -> dict:
+        try:
+            binary_mask = (detection_result > 0.5).astype(np.uint8)
+            
+            polygons_gdf = mask_to_polygons(binary_mask, transform, crs)
+            coastline_gdf = None
+            
+            if polygons_gdf is not None and not polygons_gdf.empty:
+                coastline_gdf = extract_coastline(polygons_gdf, water_class)
+            else:
+                logger.warning("Polygons Kosong")
+                
+            logger.info("Proses Satelit Selesai")
+            
+            return {
+                'mask': binary_mask,
+                'polygons': polygons_gdf,
+                'coastline': coastline_gdf
+            }
+            
+        except Exception as e:
+            logger.error(f"Proses Sentinel Error: {str(e)}")
+            return{
+                'mask': detection_result,
+                'polygons': None,
+                'coastline': None
+            }
 
 class CoastlineDetectorFactory:
     @staticmethod
@@ -225,38 +228,38 @@ class DetectionThread(QThread):
             base_name = os.path.basename(self.input_image_path).replace('.tif', '')
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             output_filename = f"{base_name}_deteksi_{timestamp}.tif"
-            output_path = os.path.join(self.file_handler.output_dir, output_filename)
 
             if self.detector.model_name == "UAV_CoastlineDetector":
                 preprocessed, profile, transform, crs = self.detector.preprocess(self.input_image_path)
                 mask, meta = self.detector.detect(preprocessed)
+                postprocess_result = self.detector.postprocess(mask, transform, crs, water_class=1)
             elif self.detector.model_name == "Sentinel2_CoastlineDetector":
-                preprocessed = self.detector.preprocess(self.input_image_array)
+                preprocessed, profile, transform, crs, bands = self.detector.preprocess(self.input_image_path)
                 mask, meta = self.detector.detect(preprocessed)
-                with rasterio.open(self.input_image_path) as src:
-                    profile = src.profile
-                    transform = src.transform
-                    crs = src.crs
+                postprocess_result = self.detector.postprocess(mask, transform, crs, water_class=1)
             else:
                 self.detectionFailed.emit("Model tidak dikenali")
                 return
-
-            result = self.detector.postprocess(mask)
-
-            tiff_path = self.file_handler.save_tiff(result, profile, filename=output_filename)
             
-            polygons_gdf = self.detector.convert_to_polygons(result, transform, crs)
-            if polygons_gdf is None or polygons_gdf.empty:
-                logger.warning("Polygons GeoDataFrame is empty or None")
-                shp_path = None
-            else:
+            result_mask = postprocess_result['mask']
+            polygons_gdf = postprocess_result['polygons']
+            coastline_gdf = postprocess_result['coastline']
+            
+            tiff_path = self.file_handler.save_tiff(result_mask, profile, filename=output_filename)
+            shp_path = None
+            
+            if polygons_gdf is not None and not polygons_gdf.empty:
                 shp_path = self.file_handler.save_coastline_shapefile(polygons_gdf, water_class=1)
-
+            else:
+                logger.warning("Polygons kosong")
+                
             meta.update({
                 'tiff_path': tiff_path,
-                'shapefile_path': shp_path
+                'shapefile_path': shp_path,
+                'polygons_available': polygons_gdf is not None and not polygons_gdf.empty,
+                'coastline_available': coastline_gdf is not None and not coastline_gdf.empty
             })
-
+            
             self.detectionFinished.emit(tiff_path or "", meta)
 
         except Exception as e:

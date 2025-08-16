@@ -13,7 +13,7 @@ def generate_input_preview(image_path: str, label_width: int, label_height: int)
 
         if is_uav:
             bands_to_read = [1, 2, 3]
-        else:
+        elif is_sentinel:
             bands_to_read = [
                 SENTINEL2_BANDS['B4'] + 1,
                 SENTINEL2_BANDS['B3'] + 1,

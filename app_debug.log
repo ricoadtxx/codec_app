@@ -8768,3 +8768,261 @@ TypeError: Can't instantiate abstract class SentinelCoastlineDetector with abstr
 2025-07-26 15:37:01,661 - DEBUG - Exiting outermost env
 2025-07-26 15:37:01,661 - DEBUG - Exited env context: <rasterio.env.Env object at 0x00000259800D54E0>
 2025-07-26 15:37:08,104 - INFO - Semua file output telah dihapus.
+2025-07-30 08:10:54,788 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A674C5DB0>
+2025-07-30 08:10:54,788 - DEBUG - Starting outermost env
+2025-07-30 08:10:54,789 - DEBUG - No GDAL environment exists
+2025-07-30 08:10:54,790 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A674C5D50> created
+2025-07-30 08:10:54,872 - DEBUG - Installing FilePath filesystem handler plugin...
+2025-07-30 08:10:54,872 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:10:54,872 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:10:54,872 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A674C5D50>.
+2025-07-30 08:10:54,872 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A674C5DB0>
+2025-07-30 08:10:54,873 - DEBUG - Sharing flag: 0
+2025-07-30 08:10:54,991 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: D:\Program Files\PostgreSQL\16\share\contrib\postgis-3.5\proj\proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number >= 4 is expected. It comes from another PROJ installation.
+2025-07-30 08:10:54,991 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32748 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.
+2025-07-30 08:10:55,008 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:55,008 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:55,008 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:55,008 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:55,009 - DEBUG - Dataset <open DatasetReader name='D:/Downloads/Sentinel-2.tif' mode='r'> is started.
+2025-07-30 08:10:55,009 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A674C5DB0>
+2025-07-30 08:10:55,009 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A674C5D50> options
+2025-07-30 08:10:55,009 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A674C5D50>.
+2025-07-30 08:10:55,009 - DEBUG - Exiting outermost env
+2025-07-30 08:10:55,009 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A674C5DB0>
+2025-07-30 08:10:55,009 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A674C5DE0>
+2025-07-30 08:10:55,009 - DEBUG - Starting outermost env
+2025-07-30 08:10:55,009 - DEBUG - No GDAL environment exists
+2025-07-30 08:10:55,009 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A674C5D50> created
+2025-07-30 08:10:55,009 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:10:55,010 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:10:55,010 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A674C5D50>.
+2025-07-30 08:10:55,010 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A674C5DE0>
+2025-07-30 08:10:55,011 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:55,011 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:55,011 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:55,011 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:55,011 - DEBUG - Output nodata values: [None, None, None, None]
+2025-07-30 08:10:55,013 - DEBUG - all_valid: True
+2025-07-30 08:10:55,013 - DEBUG - mask_flags: ([<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>])
+2025-07-30 08:10:55,013 - DEBUG - Jump straight to _read()
+2025-07-30 08:10:55,013 - DEBUG - Window: None
+2025-07-30 08:10:55,014 - DEBUG - IO window xoff=0.0 yoff=0.0 width=4636.0 height=4095.0
+2025-07-30 08:10:56,443 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A674C5DE0>
+2025-07-30 08:10:56,443 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A674C5D50> options
+2025-07-30 08:10:56,443 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A674C5D50>.
+2025-07-30 08:10:56,443 - DEBUG - Exiting outermost env
+2025-07-30 08:10:56,443 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A674C5DE0>
+2025-07-30 08:10:56,495 - DEBUG - Creating converter from 3 to 5
+2025-07-30 08:10:57,206 - INFO - UAV model loaded successfully
+2025-07-30 08:10:57,476 - INFO - UAV model loaded successfully
+2025-07-30 08:10:57,477 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A020A4760>
+2025-07-30 08:10:57,477 - DEBUG - Starting outermost env
+2025-07-30 08:10:57,477 - DEBUG - No GDAL environment exists
+2025-07-30 08:10:57,477 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A020A4790> created
+2025-07-30 08:10:57,478 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:10:57,478 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:10:57,478 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A020A4790>.
+2025-07-30 08:10:57,478 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A020A4760>
+2025-07-30 08:10:57,478 - DEBUG - Sharing flag: 0
+2025-07-30 08:10:57,550 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: D:\Program Files\PostgreSQL\16\share\contrib\postgis-3.5\proj\proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number >= 4 is expected. It comes from another PROJ installation.
+2025-07-30 08:10:57,550 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32748 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.
+2025-07-30 08:10:57,556 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:57,556 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:57,556 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:57,556 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:10:57,556 - DEBUG - Dataset <open DatasetReader name='D:/Downloads/Sentinel-2.tif' mode='r'> is started.
+2025-07-30 08:10:57,556 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A020A4760>
+2025-07-30 08:10:57,556 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A020A4790> options
+2025-07-30 08:10:57,556 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A020A4790>.
+2025-07-30 08:10:57,556 - DEBUG - Exiting outermost env
+2025-07-30 08:10:57,556 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A020A4760>
+2025-07-30 08:10:57,556 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A02097AF0>
+2025-07-30 08:10:57,556 - DEBUG - Starting outermost env
+2025-07-30 08:10:57,556 - DEBUG - No GDAL environment exists
+2025-07-30 08:10:57,556 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A020A4790> created
+2025-07-30 08:10:57,556 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:10:57,556 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:10:57,557 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A020A4790>.
+2025-07-30 08:10:57,557 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A02097AF0>
+2025-07-30 08:10:57,557 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:57,557 - DEBUG - Output nodata values: [None]
+2025-07-30 08:10:57,557 - DEBUG - all_valid: True
+2025-07-30 08:10:57,557 - DEBUG - mask_flags: ([<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>])
+2025-07-30 08:10:57,557 - DEBUG - Jump straight to _read()
+2025-07-30 08:10:57,557 - DEBUG - Window: None
+2025-07-30 08:10:57,557 - DEBUG - IO window xoff=0.0 yoff=0.0 width=4636.0 height=4095.0
+2025-07-30 08:10:58,961 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:58,961 - DEBUG - Output nodata values: [None]
+2025-07-30 08:10:58,961 - DEBUG - all_valid: True
+2025-07-30 08:10:58,961 - DEBUG - mask_flags: ([<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>])
+2025-07-30 08:10:58,961 - DEBUG - Jump straight to _read()
+2025-07-30 08:10:58,961 - DEBUG - Window: None
+2025-07-30 08:10:58,961 - DEBUG - IO window xoff=0.0 yoff=0.0 width=4636.0 height=4095.0
+2025-07-30 08:10:59,003 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:10:59,003 - DEBUG - Output nodata values: [None]
+2025-07-30 08:10:59,003 - DEBUG - all_valid: True
+2025-07-30 08:10:59,003 - DEBUG - mask_flags: ([<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>])
+2025-07-30 08:10:59,003 - DEBUG - Jump straight to _read()
+2025-07-30 08:10:59,003 - DEBUG - Window: None
+2025-07-30 08:10:59,003 - DEBUG - IO window xoff=0.0 yoff=0.0 width=4636.0 height=4095.0
+2025-07-30 08:10:59,550 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A02097AF0>
+2025-07-30 08:10:59,551 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A020A4790> options
+2025-07-30 08:10:59,551 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A020A4790>.
+2025-07-30 08:10:59,551 - DEBUG - Exiting outermost env
+2025-07-30 08:10:59,551 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A02097AF0>
+2025-07-30 08:11:06,481 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A02A05510>
+2025-07-30 08:11:06,481 - DEBUG - Starting outermost env
+2025-07-30 08:11:06,481 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:06,481 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A02A07FD0> created
+2025-07-30 08:11:06,481 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:06,481 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:06,481 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A02A07FD0>.
+2025-07-30 08:11:06,481 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A02A05510>
+2025-07-30 08:11:06,481 - DEBUG - Sharing flag: 0
+2025-07-30 08:11:06,541 - WARNING - CPLE_AppDefined in PROJ: proj_create_from_database: D:\Program Files\PostgreSQL\16\share\contrib\postgis-3.5\proj\proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number >= 4 is expected. It comes from another PROJ installation.
+2025-07-30 08:11:06,541 - WARNING - CPLE_AppDefined in The definition of projected CRS EPSG:32748 got from GeoTIFF keys is not the same as the one from the EPSG registry, which may cause issues during reprojection operations. Set GTIFF_SRS_SOURCE configuration option to EPSG to use official parameters (overriding the ones from GeoTIFF keys), or to GEOKEYS to use custom values from GeoTIFF keys and drop the EPSG code.
+2025-07-30 08:11:06,551 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:06,551 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:06,551 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:06,551 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:06,551 - DEBUG - Dataset <open DatasetReader name='D:/Downloads/Sentinel-2.tif' mode='r'> is started.
+2025-07-30 08:11:06,551 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A02A05510>
+2025-07-30 08:11:06,551 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A02A07FD0> options
+2025-07-30 08:11:06,551 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A02A07FD0>.
+2025-07-30 08:11:06,551 - DEBUG - Exiting outermost env
+2025-07-30 08:11:06,551 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A02A05510>
+2025-07-30 08:11:06,551 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A02A07670>
+2025-07-30 08:11:06,551 - DEBUG - Starting outermost env
+2025-07-30 08:11:06,551 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:06,551 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A02A07FD0> created
+2025-07-30 08:11:06,551 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:06,551 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:06,551 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A02A07FD0>.
+2025-07-30 08:11:06,551 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A02A07670>
+2025-07-30 08:11:06,551 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:11:06,551 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:11:06,551 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:11:06,551 - DEBUG - Output nodata values: [None, None, None]
+2025-07-30 08:11:06,551 - DEBUG - all_valid: True
+2025-07-30 08:11:06,551 - DEBUG - mask_flags: ([<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>], [<MaskFlags.all_valid: 1>])
+2025-07-30 08:11:06,551 - DEBUG - Jump straight to _read()
+2025-07-30 08:11:06,551 - DEBUG - Window: None
+2025-07-30 08:11:06,551 - DEBUG - IO window xoff=0.0 yoff=0.0 width=4636.0 height=4095.0
+2025-07-30 08:11:07,907 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A02A07670>
+2025-07-30 08:11:07,907 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A02A07FD0> options
+2025-07-30 08:11:07,907 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A02A07FD0>.
+2025-07-30 08:11:07,908 - DEBUG - Exiting outermost env
+2025-07-30 08:11:07,908 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A02A07670>
+2025-07-30 08:11:13,367 - INFO - UAV image preprocessing completed
+2025-07-30 08:11:49,025 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2F4742B0>
+2025-07-30 08:11:49,025 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,025 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,025 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2F48D1E0> created
+2025-07-30 08:11:49,025 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,025 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,025 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2F48D1E0>.
+2025-07-30 08:11:49,025 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2F4742B0>
+2025-07-30 08:11:49,025 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2F4742B0>
+2025-07-30 08:11:49,025 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2F48D1E0> options
+2025-07-30 08:11:49,025 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2F48D1E0>.
+2025-07-30 08:11:49,025 - DEBUG - Exiting outermost env
+2025-07-30 08:11:49,025 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2F4742B0>
+2025-07-30 08:11:49,025 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,025 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,025 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,025 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2F48CEB0> created
+2025-07-30 08:11:49,025 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,025 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,025 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2F48CEB0>.
+2025-07-30 08:11:49,025 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,025 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:49,025 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,025 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2F48CEB0> options
+2025-07-30 08:11:49,025 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2F48CEB0>.
+2025-07-30 08:11:49,025 - DEBUG - Exiting outermost env
+2025-07-30 08:11:49,025 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,037 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,037 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,037 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,037 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2F48CEB0> created
+2025-07-30 08:11:49,037 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,037 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,037 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2F48CEB0>.
+2025-07-30 08:11:49,037 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,037 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:49,037 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,037 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2F48CEB0> options
+2025-07-30 08:11:49,037 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2F48CEB0>.
+2025-07-30 08:11:49,037 - DEBUG - Exiting outermost env
+2025-07-30 08:11:49,037 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2F477490>
+2025-07-30 08:11:49,403 - WARNING - Polygons Kosong
+2025-07-30 08:11:49,403 - INFO - Proses UAV Selesai
+2025-07-30 08:11:49,403 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2F4F06D0>
+2025-07-30 08:11:49,403 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,403 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,403 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0> created
+2025-07-30 08:11:49,403 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,403 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,403 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0>.
+2025-07-30 08:11:49,403 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2F4F06D0>
+2025-07-30 08:11:49,405 - DEBUG - Skipped delete for overwrite, dataset does not exist: 'output\\Sentinel-2_deteksi_20250730_081106.tif'
+2025-07-30 08:11:49,434 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:49,434 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2F4F06D0>
+2025-07-30 08:11:49,434 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0> options
+2025-07-30 08:11:49,434 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0>.
+2025-07-30 08:11:49,434 - DEBUG - Exiting outermost env
+2025-07-30 08:11:49,434 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2F4F06D0>
+2025-07-30 08:11:49,434 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2F4F3370>
+2025-07-30 08:11:49,434 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,434 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,434 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0> created
+2025-07-30 08:11:49,434 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,434 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,434 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0>.
+2025-07-30 08:11:49,434 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2F4F3370>
+2025-07-30 08:11:49,455 - INFO - GDAL signalled an error: err_no=1, msg='PROJ: proj_create_from_name: D:\\Program Files\\PostgreSQL\\16\\share\\contrib\\postgis-3.5\\proj\\proj.db contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number >= 4 is expected. It comes from another PROJ installation.'
+2025-07-30 08:11:49,532 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2F4F3370>
+2025-07-30 08:11:49,532 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0> options
+2025-07-30 08:11:49,539 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2F4F1DB0>.
+2025-07-30 08:11:49,539 - DEBUG - Exiting outermost env
+2025-07-30 08:11:49,539 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2F4F3370>
+2025-07-30 08:11:49,539 - INFO - TIFF saved to: output\Sentinel-2_deteksi_20250730_081106.tif
+2025-07-30 08:11:49,539 - WARNING - Polygons kosong
+2025-07-30 08:11:49,577 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2FB9B3A0>
+2025-07-30 08:11:49,577 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,577 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,577 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2FB99600> created
+2025-07-30 08:11:49,577 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,577 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,577 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2FB99600>.
+2025-07-30 08:11:49,577 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2FB9B3A0>
+2025-07-30 08:11:49,577 - DEBUG - Sharing flag: 0
+2025-07-30 08:11:49,698 - DEBUG - Nodata success: 0, Nodata value: 0.000000
+2025-07-30 08:11:49,698 - DEBUG - Dataset <open DatasetReader name='output\Sentinel-2_deteksi_20250730_081106.tif' mode='r'> is started.
+2025-07-30 08:11:49,698 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2FB9B3A0>
+2025-07-30 08:11:49,698 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2FB99600> options
+2025-07-30 08:11:49,698 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2FB99600>.
+2025-07-30 08:11:49,698 - DEBUG - Exiting outermost env
+2025-07-30 08:11:49,698 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2FB9B3A0>
+2025-07-30 08:11:49,698 - DEBUG - Entering env context: <rasterio.env.Env object at 0x0000019A2FB9A710>
+2025-07-30 08:11:49,698 - DEBUG - Starting outermost env
+2025-07-30 08:11:49,698 - DEBUG - No GDAL environment exists
+2025-07-30 08:11:49,698 - DEBUG - New GDAL environment <rasterio._env.GDALEnv object at 0x0000019A2FB99600> created
+2025-07-30 08:11:49,698 - DEBUG - GDAL_DATA found in environment.
+2025-07-30 08:11:49,698 - DEBUG - PROJ_LIB found in environment.
+2025-07-30 08:11:49,698 - DEBUG - Started GDALEnv: self=<rasterio._env.GDALEnv object at 0x0000019A2FB99600>.
+2025-07-30 08:11:49,698 - DEBUG - Entered env context: <rasterio.env.Env object at 0x0000019A2FB9A710>
+2025-07-30 08:11:49,698 - DEBUG - Output nodata value read from file: None
+2025-07-30 08:11:49,698 - DEBUG - Output nodata values: [None]
+2025-07-30 08:11:49,698 - DEBUG - all_valid: True
+2025-07-30 08:11:49,698 - DEBUG - mask_flags: ([<MaskFlags.all_valid: 1>],)
+2025-07-30 08:11:49,698 - DEBUG - Jump straight to _read()
+2025-07-30 08:11:49,703 - DEBUG - Window: None
+2025-07-30 08:11:49,703 - DEBUG - IO window xoff=0.0 yoff=0.0 width=4636.0 height=4095.0
+2025-07-30 08:11:50,199 - DEBUG - Exiting env context: <rasterio.env.Env object at 0x0000019A2FB9A710>
+2025-07-30 08:11:50,199 - DEBUG - Cleared existing <rasterio._env.GDALEnv object at 0x0000019A2FB99600> options
+2025-07-30 08:11:50,199 - DEBUG - Stopped GDALEnv <rasterio._env.GDALEnv object at 0x0000019A2FB99600>.
+2025-07-30 08:11:50,199 - DEBUG - Exiting outermost env
+2025-07-30 08:11:50,199 - DEBUG - Exited env context: <rasterio.env.Env object at 0x0000019A2FB9A710>
+2025-07-30 08:11:58,997 - INFO - Semua file output telah dihapus.
